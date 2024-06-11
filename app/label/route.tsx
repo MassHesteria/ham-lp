@@ -1,29 +1,30 @@
+
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
  
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams
-  const usr = searchParams.get('u')
+  const idx = searchParams.get('i')
   return new ImageResponse(
     (
       <div
         style={{
-          fontSize: 40,
-          color: '#8be9fd',
+          fontSize: 32,
+          color: '#bd93f9',
           background: '#282a36',
           width: '100%',
           height: '100%',
           justifyContent: 'center',
-          paddingTop: '16px',
+          paddingTop: '6px',
           display: 'flex'
         }}
       >
-        Ham LPs of @{usr}
+        #{idx}
       </div>
     ),
     {
-      width: 764,
-      height: 400,
+      width: 232,
+      height: 292,
     },
   );
 }

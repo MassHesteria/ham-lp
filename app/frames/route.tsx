@@ -37,7 +37,7 @@ const getDataFromFID = async (fid: number): Promise<UserData|null> => {
   const users = json.users
 
   if (users && users.length > 0) {
-    console.log(users[0].verified_addresses.eth_addresses)
+    //console.log(users[0].verified_addresses.eth_addresses)
     return {
       fid: users[0].fid,
       name: users[0].username,
@@ -60,7 +60,7 @@ const getDataFromName = async (name: string): Promise<UserData|null> => {
   const users = json.result.users
 
   if (users && users.length > 0) {
-    console.log(users[0].verified_addresses.eth_addresses)
+    //console.log(users[0].verified_addresses.eth_addresses)
     return {
       fid: users[0].fid,
       name: users[0].username,
@@ -77,7 +77,7 @@ const handleRequest = frames(async (ctx: any) => {
   const message = ctx?.message
   let data: UserData|null = null
 
-  console.log(message)
+  //console.log(message)
 
   if (ctx.searchParams?.fid) {
     data = await getDataFromFID(ctx.searchParams.fid)

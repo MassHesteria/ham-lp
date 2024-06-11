@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
+import { getHostName } from '../frames';
 
 const hash = '0x68f343bC08D1C093754a74F2b45a69A2f1A42872'
 const addr = '0xF6b32563920C67AE96879A2660759ec453e4B818'
@@ -42,7 +43,6 @@ async function fetchPaginatedData(
         const sent: TokenTx[] = []
 
         data.items.forEach((item: any) => {
-          console.log(item)
           if (item.from.hash === addr) {
             sent.push({
               id: parseInt(item.total.token_id),
@@ -74,6 +74,11 @@ async function fetchPaginatedData(
   }
 }
 
+const getLabel = async (idx: string) => {
+  const data = await fetch(getHostName() + `/label?i=${idx}`)
+  return await data.arrayBuffer()
+}
+
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams
   const id = searchParams.get('i')
@@ -90,6 +95,8 @@ export async function GET(req: NextRequest) {
   const base64Data = json.metadata.image
   const [, base64] = base64Data.split(',');
   
+  const back = await getLabel(id)
+
   // Decode the Base64 string into an SVG string
   const svg = Buffer.from(base64, 'base64')
 
@@ -98,22 +105,17 @@ export async function GET(req: NextRequest) {
   }).composite([
     { input: svg }
   ])
-  .png().toBuffer()
+  .png()
+  .toBuffer()
 
-  const pngBuffer = await sharp(framedPng)
-    .resize(232, 292, { fit: 'contain', position: 'south', background: '#282a36'})
+  const resized = await sharp(framedPng)
+    .resize(232, 232)
+    .png()
+    .toBuffer()
+
+  const pngBuffer = await sharp(back)
     .composite([
-      {
-        input: {
-          text: {
-            text: `<span foreground="#bd93f9" size="x-large">\n#${id}</span>`,
-            rgba: true,
-            width: 232,
-            dpi: 122
-          }
-        },
-        gravity: 'north'
-      },
+      { input: resized, gravity: 'south'}
     ])
     .png().toBuffer()
 
