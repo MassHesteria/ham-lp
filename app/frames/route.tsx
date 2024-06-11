@@ -48,6 +48,8 @@ const handleRequest = frames(async (ctx: any) => {
   const message = ctx?.message
   let data: UserData|null = null
 
+  console.log(message)
+
   if (ctx.searchParams?.fid) {
     data = await getDataFromFID(ctx.searchParams.fid)
   } else if (message !== undefined) {
@@ -56,7 +58,7 @@ const handleRequest = frames(async (ctx: any) => {
       if (!Number.isNaN(fid)) {
         data = await getDataFromFID(fid)
       }
-    } else {
+    } else if (message.requesterUserData !== undefined) {
       data = {
         fid: message.requesterFid,
         name: message.requesterUserData.username,

@@ -26,26 +26,9 @@ export const getHubRoute = (): string => {
 //-------------------------------------------------------------------
 // Frame setup
 //-------------------------------------------------------------------
-
-/*export type Color = {
-  red: number;
-  green: number;
-  blue: number;
-}*/
-
-export type State = {
-  top: number;
-  mid: number;
-  bot: number;
-}
  
-export const frames = createFrames<State>({
+export const frames = createFrames({
   middleware: [farcasterHubContext({
     hubHttpUrl: getHubRoute()
   })],
-  initialState: {
-    top: -1,
-    mid: -1,
-    bot: -1
-  }
 });
