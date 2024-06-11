@@ -16,7 +16,7 @@ export const getHostName = (): string => {
   return `${proto}://${host}`;
 }
 
-const getHubRoute = (): string => {
+export const getHubRoute = (): string => {
   if (process.env['VERCEL_REGION']) {
     return 'https://nemes.farcaster.xyz:2281'
   }

@@ -22,8 +22,8 @@ export async function generateMetadata({ searchParams }: Props) {
 
   const metaData = await fetchMetadata(routeUrl);
   return {
-    title: "Monster Maker",
-    description: "Make a random monster",
+    title: "Ham LP Viewer",
+    description: "View your Ham LPs in a frame",
     metadataBase: new URL(getHostName()),
     other: metaData,
   };
