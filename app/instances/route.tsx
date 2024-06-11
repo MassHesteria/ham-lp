@@ -11,7 +11,8 @@ function objectToQueryString(params: any) {
 
 type TokenTx = {
   id: number,
-  timestamp: number
+  timestamp: number,
+  recv: boolean
 }
 
 async function fetchPaginatedData(
@@ -35,25 +36,37 @@ async function fetchPaginatedData(
       const data = await response.json();
 
       if (data.items) {
-        const recv: TokenTx[] = []
-        const sent: TokenTx[] = []
+        const all: TokenTx[] = []
 
         data.items.forEach((item: any) => {
           if (item.from.hash.toLowerCase() === addr.toLowerCase()) {
-            sent.push({
+            all.push({
               id: parseInt(item.total.token_id),
               timestamp: Date.parse(item.timestamp),
+              recv: false
             });
           } else if (item.to.hash.toLowerCase() == addr.toLowerCase()) {
-            recv.push({
+            all.push({
               id: parseInt(item.total.token_id),
               timestamp: Date.parse(item.timestamp),
+              recv: true
             });
           }
         });
 
-        recv.forEach((token) => {
-          onSuccess(token.id)
+        const tokens: number[] = []
+        all.sort((a, b) => a.timestamp - b.timestamp).forEach(p => {
+          if (p.recv) {
+            tokens.push(p.id)
+          } else {
+            const idx = tokens.findIndex(t => t === p.id)
+            if (idx >= 0) {
+              tokens.splice(idx, 1)
+            }
+          }
+        })
+        tokens.forEach((id) => {
+          onSuccess(id)
         })
       }
 
