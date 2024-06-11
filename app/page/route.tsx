@@ -3,22 +3,8 @@ import { getHostName } from "../frames"
 import sharp from "sharp"
 
 const getBackground = async (username: string) => {
-  return await sharp({
-    create: { width: 764, height: 370, channels: 3, background: "#282a36" },
-  }).composite([
-    {
-      input: {
-        text: {
-          text: `<span foreground="#8be9fd" size="x-large">Ham LPs of @${username}</span>`,
-          rgba: true,
-          width: 764,
-          dpi: 172
-        },
-      },
-      gravity: 'north'
-    },
-  ])
-  .png().toBuffer()
+  const data = await fetch(getHostName() + `/background?u=${username}`)
+  return await data.arrayBuffer()
 }
 
 const getImage = async (id: string, left: number, top: number): Promise<any> => {
