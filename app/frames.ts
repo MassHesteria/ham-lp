@@ -28,7 +28,8 @@ export const getHubRoute = (): string => {
 //-------------------------------------------------------------------
  
 export const frames = createFrames({
-  middleware: [farcasterHubContext({
-    hubHttpUrl: getHubRoute()
+  middleware: [farcasterHubContext(
+    process.env['VERCEL_REGION'] ? {} : {
+    hubHttpUrl: 'http://localhost:3010/hub'
   })],
 });
