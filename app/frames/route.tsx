@@ -48,6 +48,7 @@ const handleRequest = frames(async (ctx: any) => {
   const message = ctx?.message
   let data: UserData|null = null
 
+  console.log('hubRoute:',getHubRoute())
   console.log(message)
 
   if (ctx.searchParams?.fid) {
