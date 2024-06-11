@@ -26,19 +26,48 @@ const getShareLink = (fid: number|null) => {
 }
 
 const getDataFromFID = async (fid: number): Promise<UserData|null> => {
-  const userData = await getUserDataForFid({ fid })
-  //console.log(userData)
-  if (userData?.username !== undefined) {
-    const res = await fetch(getHubRoute() + `/v1/verificationsByFid?fid=${fid}`)
-    if (res) {
-      const json = await res.clone().json()
-      return {
-        fid,
-        name: userData.username,
-        addresses: json.messages.map(extractAddressFromJSONMessage).filter((p: any) => p != null)
-      }
+  const url = `https://api.neynar.com/v2/farcaster/user/bulk?fids=${fid}&viewer_fid=3`;
+  const options = {
+    method: 'GET',
+    headers: {accept: 'application/json', api_key: 'NEYNAR_API_DOCS'}
+  };
+
+  const res = await fetch(url, options)
+  const json = await res.json()
+  const users = json.users
+
+  if (users && users.length > 0) {
+    console.log(users[0].verified_addresses.eth_addresses)
+    return {
+      fid: users[0].fid,
+      name: users[0].username,
+      addresses: users[0].verified_addresses.eth_addresses
     }
   }
+
+  return null
+}
+
+const getDataFromName = async (name: string): Promise<UserData|null> => {
+  const url = `https://api.neynar.com/v2/farcaster/user/search?q=${name}&viewer_fid=3&limit=1`;
+  const options = {
+    method: 'GET',
+    headers: {accept: 'application/json', api_key: 'NEYNAR_API_DOCS'}
+  };
+
+  const res = await fetch(url, options)
+  const json = await res.json()
+  const users = json.result.users
+
+  if (users && users.length > 0) {
+    console.log(users[0].verified_addresses.eth_addresses)
+    return {
+      fid: users[0].fid,
+      name: users[0].username,
+      addresses: users[0].verified_addresses.eth_addresses
+    }
+  }
+
   return null
 }
 
@@ -48,17 +77,14 @@ const handleRequest = frames(async (ctx: any) => {
   const message = ctx?.message
   let data: UserData|null = null
 
-  console.log('hubRoute:',getHubRoute())
   console.log(message)
 
   if (ctx.searchParams?.fid) {
     data = await getDataFromFID(ctx.searchParams.fid)
   } else if (message !== undefined) {
     if (message.inputText) {
-      const fid = parseInt(message.inputText)
-      if (!Number.isNaN(fid)) {
-        data = await getDataFromFID(fid)
-      }
+      const text: string = message.inputText
+      data = await getDataFromName(text.replace('@', ''))
     } else if (message.requesterUserData !== undefined) {
       data = {
         fid: message.requesterFid,
@@ -88,7 +114,7 @@ const handleRequest = frames(async (ctx: any) => {
       imageOptions: {
         aspectRatio: "1.91:1",
       },
-      textInput: " Search by FID",
+      textInput: " Search by username",
       buttons: [
         <Button action="post" target={baseRoute}>Mine/🔎</Button>,
         <Button action="link" target = {getShareLink(null)}>Share</Button>
@@ -133,7 +159,7 @@ const handleRequest = frames(async (ctx: any) => {
       imageOptions: {
         aspectRatio: '1.91:1'
       },
-      textInput: " Search by FID",
+      textInput: " Search by username",
       buttons: [
         <Button action="post" target={baseRoute}>Mine/🔎</Button>,
         <Button action="link" target = {getShareLink(null)}>Share</Button>
@@ -174,7 +200,7 @@ const handleRequest = frames(async (ctx: any) => {
     imageOptions: {
       aspectRatio: "1.91:1"
     },
-    textInput: " Search by FID",
+    textInput: " Search by username",
     buttons
   }
 })
