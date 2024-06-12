@@ -168,7 +168,7 @@ const handleRequest = frames(async (ctx: any) => {
   }
 
   let username = data.name
-  let imagePath = getHostName() + `/page?ts=${timestamp}&u=${encodeURIComponent(username)}`
+  let imagePath = getHostName() + `/page?u=${encodeURIComponent(username)}`
   const buttons: AllowedFrameButtonItems[] = [
     <Button action="post" target = {baseRoute}>Mine/🔎</Button>,
   ]
