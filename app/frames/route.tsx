@@ -1,11 +1,6 @@
 /* eslint-disable react/jsx-key */
 import { Button } from "frames.js/next";
-import {
-  frames,
-  getHostName,
-  getHubRoute,
-} from "../frames";
-import { extractAddressFromJSONMessage, getUserDataForFid } from "frames.js";
+import { frames, getHostName } from "../frames";
 import { AllowedFrameButtonItems } from "frames.js/types";
 
 type UserData = {
