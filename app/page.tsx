@@ -7,6 +7,9 @@ type Props = {
 }
 
 export async function generateMetadata({ searchParams }: Props) {
+  console.log('-- generateMetadata --')
+  console.log('getHostName():', getHostName())
+  console.log('VERCEL_URL', process.env['VERCEL_URL'])
   const routeUrl = new URL("/frames", getHostName())
 
   for (let key in searchParams) {
