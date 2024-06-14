@@ -14,6 +14,10 @@ export async function generateMetadata({ searchParams }: Props) {
 
   const routeUrl = new URL("/frames", getHostName())
 
+  //const temp = await handleRequest(new NextRequest(routeUrl))
+  //console.log(temp.body())
+  //const json = await temp.json()
+  //console.log(json)
   const temp = await fetch(routeUrl, {
     method: "GET",
       headers: {
@@ -24,6 +28,13 @@ export async function generateMetadata({ searchParams }: Props) {
     }
   )
   console.log(temp)
+  if (!temp.ok) {
+    return {
+      title: "Ham LP Viewer",
+      description: "View your Ham LPs in a frame",
+      metadataBase: new URL(getHostName()),
+    }
+  }
   const json = await temp.json()
   console.log(json)
 
