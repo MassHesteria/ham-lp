@@ -1,10 +1,33 @@
+import { ImageResponse } from 'next/og';
 import { NextRequest, NextResponse } from "next/server"
 import { getHostName } from "../frames"
 import sharp from "sharp"
 
 const getBackground = async (username: string) => {
-  const data = await fetch(getHostName() + `/background?u=${username}`)
-  return await data.arrayBuffer()
+  return Buffer.from(
+    await new ImageResponse(
+      (
+        <div
+          style={{
+            fontSize: 40,
+            color: "#8be9fd",
+            background: "#282a36",
+            width: "100%",
+            height: "100%",
+            justifyContent: "center",
+            paddingTop: "16px",
+            display: "flex",
+          }}
+        >
+          Ham LPs of @{username}
+        </div>
+      ),
+      {
+        width: 764,
+        height: 400,
+      }
+    ).arrayBuffer()
+  );
 }
 
 const getImage = async (id: string, left: number, top: number): Promise<any> => {
