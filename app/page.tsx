@@ -23,6 +23,7 @@ export async function generateMetadata({ searchParams }: Props) {
       cache: "no-cache",
     }
   )
+  console.log(temp)
   const json = await temp.json()
   console.log(json)
 
