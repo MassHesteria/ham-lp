@@ -3,7 +3,7 @@ import { getHostName } from "../frames"
 import sharp from "sharp"
 
 const getBackground = async (username: string) => {
-  const data = await fetch(getHostName() + `/background?u=${username}`)
+  const data = await fetch(getHostName() + `/background?u=${username}&v=3`)
   return await data.arrayBuffer()
 }
 
