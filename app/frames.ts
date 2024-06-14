@@ -10,6 +10,9 @@ export const getHostName = (): string => {
   if (process.env['HOST']) {
     return process.env['HOST']
   }
+  if (process.env.VERCEL_URL) {
+    return process.env.VERCEL_URL
+  }
   const headersList = headers();
   const host = headersList.get('x-forwarded-host');
   const proto = headersList.get('x-forwarded-proto');
