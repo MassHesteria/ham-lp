@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
         <div style={{
           display: 'flex',
           justifyContent: 'center',
-          height: '94%'
+          height: '93.5%'
           }}>
           <span>Ham LPs of @{usr}</span>
         </div>
@@ -30,8 +30,8 @@ export async function GET(req: NextRequest) {
           display: 'flex',
           justifyContent: 'flex-end',
           fontSize: 16,
-          paddingRight: '8px',
-          paddingBottom: '8px',
+          paddingRight: '6px',
+          paddingBottom: '16px',
           color: '#6272a4'
           }}>
           by @masshesteria
