@@ -15,10 +15,27 @@ export async function GET(req: NextRequest) {
           height: '100%',
           justifyContent: 'center',
           paddingTop: '16px',
-          display: 'flex'
+          display: 'flex',
+          flexDirection: 'column'
         }}
       >
-        Ham LPs of @{usr}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          height: '94%'
+          }}>
+          <span>Ham LPs of @{usr}</span>
+        </div>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          fontSize: 16,
+          paddingRight: '8px',
+          paddingBottom: '8px',
+          color: '#6272a4'
+          }}>
+          by @masshesteria
+        </div>
       </div>
     ),
     {
