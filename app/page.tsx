@@ -1,5 +1,6 @@
 import { fetchMetadata } from "frames.js/next";
 import { getHostName } from "./frames";
+import { FRAMES_META_TAGS_HEADER } from "frames.js/core";
 
 type Props = {
   params: { id: string }
@@ -12,6 +13,18 @@ export async function generateMetadata({ searchParams }: Props) {
   console.log('VERCEL_URL', process.env['VERCEL_URL'])
 
   const routeUrl = new URL("/frames", getHostName())
+
+  const temp = await fetch(routeUrl, {
+    method: "GET",
+      headers: {
+        // we use Accept header to get the response in JSON format, this is automatically supported by frames.js renderResponse middleware
+        Accept: FRAMES_META_TAGS_HEADER,
+      },
+      cache: "no-cache",
+    }
+  )
+  const json = await temp.json()
+  console.log(json)
 
   for (let key in searchParams) {
     let value = searchParams[key];
