@@ -1,11 +1,6 @@
 import { NextRequest } from "next/server";
 import { frames } from "../../frames";
-import { getPage } from "@/app/frames/route";
-
-const deserializeFromBase64 = (base64: string) => {
-  const jsonString = Buffer.from(base64, 'base64').toString('utf-8');
-  return JSON.parse(jsonString);
-};
+import { deserializeFromBase64, getPage } from "../../generate";
 
 export async function GET(
    req: NextRequest,
