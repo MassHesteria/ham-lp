@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-key */
 import { Button } from "frames.js/next";
 import { frames, getHostName } from "../frames";
-import { AllowedFrameButtonItems } from "frames.js/types";
+import { AllowedFrameButtonItems, FramesHandlerFunctionReturnType, JsonValue } from "frames.js/types";
 
 type UserData = {
   fid: number;
@@ -9,13 +9,14 @@ type UserData = {
   addresses: string[];
 }
 
-const getShareLink = (fid: number|null) => {
-  let baseRoute = getHostName() + `?ts=${Date.now()}`;
-  if (fid != null) {
-    baseRoute += `&fid=${fid}`
+const getShareLink = (encoded: string|null) => {
+  let baseRoute = getHostName();
+  if (encoded != null) {
+    baseRoute += `/share/${encoded}`
+    //console.log(baseRoute)
   }
   const shareLink =
-    "https://warpcast.com/~/compose?text=View Ham LPs in a Frame!" +
+    `https://warpcast.com/~/compose?text=${encodeURIComponent("View Ham LPs in a Frame!")}` +
     "&embeds[]=" + encodeURIComponent(baseRoute);
   return shareLink
 }
@@ -66,9 +67,69 @@ const getDataFromName = async (name: string): Promise<UserData|null> => {
   return null
 }
 
+const serializeToBase64 = (json: any) => {
+  const jsonString = JSON.stringify(json);
+  return Buffer.from(jsonString).toString('base64');
+};
+
+export const getPage = (
+  username: string,
+  fid: number,
+  tokens: number[],
+  idx: string | undefined
+): FramesHandlerFunctionReturnType<JsonValue|undefined> => {
+  let imagePath = getHostName() + `/page?u=${encodeURIComponent(username)}&v=3`;
+  const baseRoute = getHostName() + '/frames'
+  const buttons: AllowedFrameButtonItems[] = [
+    <Button action="post" target={baseRoute}>
+      Mine/🔎
+    </Button>,
+  ];
+
+  let num = 0;
+  if (idx !== undefined) {
+    num = parseInt(idx) % tokens.length;
+  }
+  imagePath += `&a=${tokens[num]}`;
+
+  if (num + 1 < tokens.length) {
+    imagePath += `&b=${tokens[num + 1]}`;
+  }
+
+  if (tokens.length > 2) {
+    const next = num + 1 < tokens.length ? (num + 2) % tokens.length : 0;
+    buttons.push(
+      <Button action="post" target={baseRoute + `&fid=${fid}&idx=${next}`}>
+        Next ⏭
+      </Button>
+    );
+  }
+
+  const args = {
+    n: username,
+    f: fid,
+    t: tokens,
+    i: num,
+    s: Date.now()
+  }
+  buttons.push(
+    <Button action="link" target={getShareLink(serializeToBase64(args))}>
+      Share
+    </Button>
+  );
+
+  return {
+    image: imagePath,
+    imageOptions: {
+      aspectRatio: "1.91:1",
+    },
+    textInput: " Search by username",
+    buttons,
+  };
+};
+
 const handleRequest = frames(async (ctx: any) => {
-  const timestamp = `${Date.now()}`;
-  const baseRoute = getHostName() + "/frames?ts=" + timestamp;
+  const baseRoute = getHostName() + "/frames";
   const message = ctx?.message
   let data: UserData|null = null
 
@@ -118,6 +179,7 @@ const handleRequest = frames(async (ctx: any) => {
   }
 
   const addresses = data.addresses
+  //console.log(addresses)
 
   const tokens: number[] = []
   for (let i = 0; i < addresses.length; i++) {
@@ -162,42 +224,7 @@ const handleRequest = frames(async (ctx: any) => {
     }
   }
 
-  let username = data.name
-  let imagePath = getHostName() + `/page?u=${encodeURIComponent(username)}&v=3`
-  const buttons: AllowedFrameButtonItems[] = [
-    <Button action="post" target = {baseRoute}>Mine/🔎</Button>,
-  ]
-
-  const idx = ctx.searchParams?.idx
-  let num = 0
-  if (idx !== undefined) {
-    num = parseInt(idx) % tokens.length
-  }
-  imagePath += `&a=${tokens[num]}`
-
-  if (num + 1 < tokens.length) {
-    imagePath += `&b=${tokens[num+1]}`
-  }
-
-  if (tokens.length > 2) {
-    const next = num + 1 < tokens.length ? (num + 2) % tokens.length : 0
-    buttons.push(
-      <Button action="post" target={baseRoute + `&fid=${data.fid}&idx=${next}`}>Next ⏭</Button>,
-    )
-  }
-
-  buttons.push(
-    <Button action="link" target = {getShareLink(data.fid)}>Share</Button>
-  )
-
-  return {
-    image: imagePath,
-    imageOptions: {
-      aspectRatio: "1.91:1"
-    },
-    textInput: " Search by username",
-    buttons
-  }
+  return getPage(data.name, data.fid, tokens, ctx.searchParams?.idx)
 })
 
 export const GET = handleRequest;
