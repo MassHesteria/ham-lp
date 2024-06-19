@@ -7,7 +7,6 @@ export async function generateMetadata() {
   return {
     title: "Ham LP Viewer",
     description: "View your Ham LPs in a frame",
-    metadataBase: new URL(getHostName()),
     openGraph: {
       title: "Ham LP Viewer",
       images: [imageUrl],
