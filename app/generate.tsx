@@ -52,7 +52,7 @@ export const getPage = (
   if (tokens.length > 2) {
     const next = num + 1 < tokens.length ? (num + 2) % tokens.length : 0;
     buttons.push(
-      <Button action="post" target={baseRoute + `&fid=${fid}&idx=${next}`}>
+      <Button action="post" target={baseRoute + `?fid=${fid}&idx=${next}`}>
         Next ⏭
       </Button>
     );
