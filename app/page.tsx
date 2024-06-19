@@ -1,25 +1,8 @@
 import { fetchMetadata } from "frames.js/next";
 import { getHostName } from "./frames";
 
-type Props = {
-  params: { id: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
-
-export async function generateMetadata({ searchParams }: Props) {
+export async function generateMetadata() {
   const routeUrl = new URL("/frames", getHostName())
-
-  for (let key in searchParams) {
-    let value = searchParams[key];
-    if (value !== undefined) {
-      if (Array.isArray(value)) {
-        value.forEach(val => routeUrl.searchParams.append(key, val));
-      } else {
-        routeUrl.searchParams.append(key, value);
-      }
-    }
-  }
-
   const metaData = await fetchMetadata(routeUrl);
   return {
     title: "Ham LP Viewer",
@@ -38,7 +21,7 @@ export default async function Page() {
         <a className="text-red-600 text-2xl no-underline hover:underline pr-8" href="https://github.com/masshesteria/ham-lp">Source code</a>
         <a className="text-purple-600 text-2xl no-underline hover:underline" href="https://warpcast.com/masshesteria/0xec2772dc">Original cast</a>
       </div>
-      <img className="mt-4 border border-black" style={{ maxWidth: '80%' }} alt="View Ham LPs" src="/page?u=masshesteria&a=220&b=219"></img>
+      {/*<img className="mt-4 border border-black" style={{ maxWidth: '80%' }} alt="View Ham LPs" src="/page?u=masshesteria&a=220&b=219"></img>*/}
       </center>
     </div>
   )
