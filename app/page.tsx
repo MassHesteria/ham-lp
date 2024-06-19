@@ -1,14 +1,39 @@
-import { fetchMetadata } from "frames.js/next";
 import { getHostName } from "./frames";
+import { getShareLink } from "./generate";
 
 export async function generateMetadata() {
-  const routeUrl = new URL("/frames", getHostName())
-  const metaData = await fetchMetadata(routeUrl);
+  const postUrl = getHostName() + '/frames'
+  const imageUrl = getHostName() + '/intro'
   return {
     title: "Ham LP Viewer",
     description: "View your Ham LPs in a frame",
     metadataBase: new URL(getHostName()),
-    other: metaData,
+    openGraph: {
+      title: "Ham LP Viewer",
+      images: [imageUrl],
+    },
+    other: {
+      "fc:frame": "vNext",
+      "fc:frame:image": imageUrl,
+      "fc:frame:post_url": postUrl,
+      "fc:frame:input:text": " Search by username",
+      "fc:frame:image:aspect_ratio": "1.91:1",
+      "fc:frame:button:1": "Mine/🔎",
+      "fc:frame:button:1:action": "post",
+      "fc:frame:button:1:target": postUrl,
+      "fc:frame:button:2": "POST",
+      "fc:frame:button:2:action": "link",
+      "fc:frame:button:2:target": getShareLink(null),
+      /*"hey:portal": "vLatest",
+      "hey:portal:image": imageUrl,
+      "hey:portal:post_url": postUrl,
+      "hey:portal:button:1": "SHARE",
+      "hey:portal:button:1:type": "link",
+      "hey:portal:button:1:target": HOST,
+      "hey:portal:button:2": "POST",
+      "hey:portal:button:2:type": "submit",*/
+    },
+
   };
 }
 
