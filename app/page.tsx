@@ -3,7 +3,7 @@ import { getShareLink } from "./generate";
 
 export async function generateMetadata() {
   const postUrl = getHostName() + '/frames'
-  const imageUrl = getHostName() + '/intro'
+  const imageUrl = getHostName() + '/intro.png'
   return {
     title: "Ham LP Viewer",
     description: "View your Ham LPs in a frame",
@@ -20,7 +20,7 @@ export async function generateMetadata() {
       "fc:frame:button:1": "Mine/🔎",
       "fc:frame:button:1:action": "post",
       "fc:frame:button:1:target": postUrl,
-      "fc:frame:button:2": "POST",
+      "fc:frame:button:2": "Share",
       "fc:frame:button:2:action": "link",
       "fc:frame:button:2:target": getShareLink(null),
       /*"hey:portal": "vLatest",
