@@ -13,7 +13,7 @@ const nextConfig = {
         ],
       },
       {
-        source: '/token/:id*',
+        source: '/token/:idx*',
         headers: [
           {
             key: 'Cache-Control',
