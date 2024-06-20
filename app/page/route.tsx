@@ -8,7 +8,7 @@ const getBackground = async (username: string) => {
 }
 
 const getImage = async (id: string, left: number, top: number): Promise<any> => {
-  const data = await fetch(getHostName() + `/token?i=${id}`)
+  const data = await fetch(getHostName() + `/token/${id}`)
   const buffer = await data.arrayBuffer()
   return { input: Buffer.from(buffer), left, top }
 }

@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
-import { getHostName } from '../frames';
+import { getHostName } from '../../frames';
 
 const getLabel = async (idx: string) => {
   const data = await fetch(getHostName() + `/label?i=${idx}`)
   return await data.arrayBuffer()
 }
 
-export async function GET(req: NextRequest) {
-  const searchParams = req.nextUrl.searchParams
-  const id = searchParams.get('i')
+export async function GET(
+   req: NextRequest,
+   { params }: { params: { idx: string}}
+) {
+  const id = params.idx
 
   if (id === null) {
     return NextResponse.json({ error: 'Missing argument' }, { status: 500 })
