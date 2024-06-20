@@ -1,15 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ImageResponse } from 'next/og';
 import sharp from 'sharp';
 import { getHostName } from '../../frames';
 
+export async function generateStaticParams() {
+  const arr = []
+  for (let i = 0; i < 1000; i++) {
+    arr.push({ idx: `${i + 1}` })
+  }
+  return arr
+}
+
 const getLabel = async (idx: string) => {
-  const data = await fetch(getHostName() + `/label?i=${idx}`)
+  const data = new ImageResponse(
+    (
+      <div
+        style={{
+          fontSize: 32,
+          color: '#bd93f9',
+          background: '#282a36',
+          width: '100%',
+          height: '100%',
+          justifyContent: 'center',
+          paddingTop: '6px',
+          display: 'flex'
+        }}
+      >
+        #{idx}
+      </div>
+    ),
+    {
+      width: 232,
+      height: 292,
+    },
+  );
   return await data.arrayBuffer()
 }
 
 export async function GET(
    req: NextRequest,
-   { params }: { params: { idx: string}}
+   { params }: { params: { idx: string }}
 ) {
   const id = params.idx
 
