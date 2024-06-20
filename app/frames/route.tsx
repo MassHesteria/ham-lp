@@ -1,23 +1,12 @@
 /* eslint-disable react/jsx-key */
 import { Button } from "frames.js/next";
 import { frames, getHostName } from "../frames";
-import { AllowedFrameButtonItems } from "frames.js/types";
+import { getPage, getShareLink } from "../generate";
 
 type UserData = {
   fid: number;
   name: string;
   addresses: string[];
-}
-
-const getShareLink = (fid: number|null) => {
-  let baseRoute = getHostName() + `?ts=${Date.now()}`;
-  if (fid != null) {
-    baseRoute += `&fid=${fid}`
-  }
-  const shareLink =
-    "https://warpcast.com/~/compose?text=View Ham LPs in a Frame!" +
-    "&embeds[]=" + encodeURIComponent(baseRoute);
-  return shareLink
 }
 
 const getDataFromFID = async (fid: number): Promise<UserData|null> => {
@@ -67,8 +56,7 @@ const getDataFromName = async (name: string): Promise<UserData|null> => {
 }
 
 const handleRequest = frames(async (ctx: any) => {
-  const timestamp = `${Date.now()}`;
-  const baseRoute = getHostName() + "/frames?ts=" + timestamp;
+  const baseRoute = getHostName() + "/frames";
   const message = ctx?.message
   let data: UserData|null = null
 
@@ -118,6 +106,7 @@ const handleRequest = frames(async (ctx: any) => {
   }
 
   const addresses = data.addresses
+  //console.log(addresses)
 
   const tokens: number[] = []
   for (let i = 0; i < addresses.length; i++) {
@@ -162,42 +151,7 @@ const handleRequest = frames(async (ctx: any) => {
     }
   }
 
-  let username = data.name
-  let imagePath = getHostName() + `/page?u=${encodeURIComponent(username)}&v=3`
-  const buttons: AllowedFrameButtonItems[] = [
-    <Button action="post" target = {baseRoute}>Mine/🔎</Button>,
-  ]
-
-  const idx = ctx.searchParams?.idx
-  let num = 0
-  if (idx !== undefined) {
-    num = parseInt(idx) % tokens.length
-  }
-  imagePath += `&a=${tokens[num]}`
-
-  if (num + 1 < tokens.length) {
-    imagePath += `&b=${tokens[num+1]}`
-  }
-
-  if (tokens.length > 2) {
-    const next = num + 1 < tokens.length ? (num + 2) % tokens.length : 0
-    buttons.push(
-      <Button action="post" target={baseRoute + `&fid=${data.fid}&idx=${next}`}>Next ⏭</Button>,
-    )
-  }
-
-  buttons.push(
-    <Button action="link" target = {getShareLink(data.fid)}>Share</Button>
-  )
-
-  return {
-    image: imagePath,
-    imageOptions: {
-      aspectRatio: "1.91:1"
-    },
-    textInput: " Search by username",
-    buttons
-  }
+  return getPage(data.name, data.fid, tokens, ctx.searchParams?.idx)
 })
 
 export const GET = handleRequest;

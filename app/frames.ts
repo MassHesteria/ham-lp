@@ -10,10 +10,10 @@ export const getHostName = (): string => {
   if (process.env['HOST']) {
     return process.env['HOST']
   }
-  const headersList = headers();
-  const host = headersList.get('x-forwarded-host');
-  const proto = headersList.get('x-forwarded-proto');
-  return `${proto}://${host}`;
+  if (process.env['VERCEL_URL']) {
+    return 'https://' + process.env['VERCEL_URL']
+  }
+  return 'http://localhost:3000'
 }
 
 //-------------------------------------------------------------------

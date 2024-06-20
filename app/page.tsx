@@ -1,31 +1,48 @@
-import { fetchMetadata } from "frames.js/next";
 import { getHostName } from "./frames";
+import { getShareLink } from "./generate";
 
-type Props = {
-  params: { id: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
-
-export async function generateMetadata({ searchParams }: Props) {
-  const routeUrl = new URL("/frames", getHostName())
-
-  for (let key in searchParams) {
-    let value = searchParams[key];
-    if (value !== undefined) {
-      if (Array.isArray(value)) {
-        value.forEach(val => routeUrl.searchParams.append(key, val));
-      } else {
-        routeUrl.searchParams.append(key, value);
-      }
-    }
+export async function generateMetadata() {
+  const postUrl = getHostName() + '/frames'
+  const imageUrl = getHostName() + '/intro.png'
+  if (process.env['VERCEL_URL']) {
+    console.log('')
+    console.log('VERCEL_URL', process.env['VERCEL_URL'])
+    console.log('VERCEL_BRANCH_URL', process.env['VERCEL_BRANCH_URL'])
+    console.log('VERCEL_PROJECT_PRODUCTION_URL', process.env['VERCEL_PROJECT_PRODUCTION_URL'])
+    console.log('NEXT_PUBLIC_VERCEL_URL', process.env['NEXT_PUBLIC_VERCEL_URL'])
+    console.log('NEXT_PUBLIC_VERCEL_BRANCH_URL', process.env['NEXT_PUBLIC_VERCEL_BRANCH_URL'])
+    console.log('NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL', process.env['NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL'])
+    console.log('')
   }
-
-  const metaData = await fetchMetadata(routeUrl);
   return {
     title: "Ham LP Viewer",
     description: "View your Ham LPs in a frame",
-    metadataBase: new URL(getHostName()),
-    other: metaData,
+    openGraph: {
+      title: "Ham LP Viewer",
+      images: [imageUrl],
+    },
+    other: {
+      "fc:frame": "vNext",
+      "fc:frame:image": imageUrl,
+      "fc:frame:post_url": postUrl,
+      "fc:frame:input:text": " Search by username",
+      "fc:frame:image:aspect_ratio": "1.91:1",
+      "fc:frame:button:1": "Mine/🔎",
+      "fc:frame:button:1:action": "post",
+      "fc:frame:button:1:target": postUrl,
+      "fc:frame:button:2": "Share",
+      "fc:frame:button:2:action": "link",
+      "fc:frame:button:2:target": getShareLink(null),
+      /*"hey:portal": "vLatest",
+      "hey:portal:image": imageUrl,
+      "hey:portal:post_url": postUrl,
+      "hey:portal:button:1": "SHARE",
+      "hey:portal:button:1:type": "link",
+      "hey:portal:button:1:target": HOST,
+      "hey:portal:button:2": "POST",
+      "hey:portal:button:2:type": "submit",*/
+    },
+
   };
 }
 
@@ -38,7 +55,7 @@ export default async function Page() {
         <a className="text-red-600 text-2xl no-underline hover:underline pr-8" href="https://github.com/masshesteria/ham-lp">Source code</a>
         <a className="text-purple-600 text-2xl no-underline hover:underline" href="https://warpcast.com/masshesteria/0xec2772dc">Original cast</a>
       </div>
-      <img className="mt-4 border border-black" style={{ maxWidth: '80%' }} alt="View Ham LPs" src="/page?u=masshesteria&a=220&b=219"></img>
+      {/*<img className="mt-4 border border-black" style={{ maxWidth: '80%' }} alt="View Ham LPs" src="/page?u=masshesteria&a=220&b=219"></img>*/}
       </center>
     </div>
   )
