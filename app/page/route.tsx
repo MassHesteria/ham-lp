@@ -80,6 +80,10 @@ export async function GET(req: NextRequest) {
   const response = new NextResponse(pngBuffer)
   response.headers.set("Content-Type", "image/png");
   response.headers.set("Content-Length", `${pngBuffer.length}`);
-  response.headers.set("Cache-Control", "no-store, max-age=0");
+
+  // Set max cache time based on inputs
+  const maxCache = searchParams.get('ts') === null ? 7200 : 86400
+  response.headers.set("Cache-Control",
+    `public, s-maxage=${maxCache}, max-age=${maxCache}, stale-while-revalidate=30`);
   return response;
 }
