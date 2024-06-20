@@ -5,12 +5,14 @@ export async function generateMetadata() {
   const postUrl = getHostName() + '/frames'
   const imageUrl = getHostName() + '/intro.png'
   if (process.env['VERCEL_URL']) {
+    console.log('')
     console.log('VERCEL_URL', process.env['VERCEL_URL'])
     console.log('VERCEL_BRANCH_URL', process.env['VERCEL_BRANCH_URL'])
     console.log('VERCEL_PROJECT_PRODUCTION_URL', process.env['VERCEL_PROJECT_PRODUCTION_URL'])
     console.log('NEXT_PUBLIC_VERCEL_URL', process.env['NEXT_PUBLIC_VERCEL_URL'])
     console.log('NEXT_PUBLIC_VERCEL_BRANCH_URL', process.env['NEXT_PUBLIC_VERCEL_BRANCH_URL'])
     console.log('NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL', process.env['NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL'])
+    console.log('')
   }
   return {
     title: "Ham LP Viewer",
