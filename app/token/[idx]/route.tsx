@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ImageResponse } from 'next/og';
+import { Web3 } from 'web3';
+import { Ham_LP_ABI } from './ham-lp-abi';
+import { deserializeFromBase64 } from '../../generate';
 import sharp from 'sharp';
-import { getHostName } from '../../frames';
 
 export async function generateStaticParams() {
   const arr = []
@@ -47,12 +49,16 @@ export async function GET(
     return NextResponse.json({ error: 'Missing argument' }, { status: 500 })
   }
 
-  const route = `https://ham.calderaexplorer.xyz/api/v2/tokens/0x68f343bC08D1C093754a74F2b45a69A2f1A42872/instances/${id}`
-  const data = await fetch(route)
-  const json = await data.json()
+  const web3 = new Web3('https://rpc.ham.fun');
+  const contractAddress = '0x68f343bC08D1C093754a74F2b45a69A2f1A42872';
+  const contract = new web3.eth.Contract(Ham_LP_ABI, contractAddress);
+
+  const data = await contract.methods.tokenURI(id).call() as string
+  const [, encoded] = data.split(',');
+  const decoded = deserializeFromBase64(encoded)
 
   // Extract the Base64 data part
-  const base64Data = json.metadata.image
+  const base64Data = decoded.image
   const [, base64] = base64Data.split(',');
   
   const back = await getLabel(id)
