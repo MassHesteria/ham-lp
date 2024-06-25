@@ -56,7 +56,6 @@ const getDataFromName = async (name: string): Promise<UserData|null> => {
 }
 
 const handleRequest = frames(async (ctx: any) => {
-  const baseRoute = getHostName() + "/frames";
   const message = ctx?.message
   let data: UserData|null = null
 
@@ -79,13 +78,13 @@ const handleRequest = frames(async (ctx: any) => {
 
   if (data === null) {
     return {
-      image: getHostName() + '/intro',
+      image: '/intro',
       imageOptions: {
         aspectRatio: "1.91:1",
       },
       textInput: " Search by username",
       buttons: [
-        <Button action="post" target={baseRoute}>Mine/🔎</Button>,
+        <Button action="post">Mine/🔎</Button>,
         <Button action="link" target = {getShareLink(null)}>Share</Button>
       ],
     };
@@ -131,7 +130,7 @@ const handleRequest = frames(async (ctx: any) => {
       },
       textInput: " Search by username",
       buttons: [
-        <Button action="post" target={baseRoute}>Mine/🔎</Button>,
+        <Button action="post">Mine/🔎</Button>,
         <Button action="link" target = {getShareLink(null)}>Share</Button>
       ]
     }
