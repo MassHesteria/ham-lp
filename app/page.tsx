@@ -1,9 +1,10 @@
 import { getHostName } from "./frames";
-import { getShareLink } from "./generate";
+import { GET } from "./frames/route";
+import { NextRequest } from "next/server";
 
 export async function generateMetadata() {
-  const postUrl = getHostName() + '/frames'
-  const imageUrl = getHostName() + '/intro.png'
+  //const postUrl = getHostName() + '/frames'
+  //const imageUrl = getHostName() + '/intro.png'
   if (process.env['VERCEL_URL']) {
     console.log('')
     console.log('VERCEL_URL', process.env['VERCEL_URL'])
@@ -14,14 +15,22 @@ export async function generateMetadata() {
     console.log('NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL', process.env['NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL'])
     console.log('')
   }
+  const framesRequest = new NextRequest(`${getHostName()}/frames`, {
+    headers: { Accept: "application/frames.js+metatags" },
+  });
+  const metadataResponse = await GET(framesRequest);
+  const metadata = await metadataResponse.json();
   return {
     title: "Ham LP Viewer",
     description: "View your Ham LPs in a frame",
     openGraph: {
       title: "Ham LP Viewer",
-      images: [imageUrl],
+      //images: [imageUrl],
     },
     other: {
+      ...metadata
+    }
+    /*other: temp/*{
       "fc:frame": "vNext",
       "fc:frame:image": imageUrl,
       "fc:frame:post_url": postUrl,
@@ -32,7 +41,7 @@ export async function generateMetadata() {
       "fc:frame:button:1:target": postUrl,
       "fc:frame:button:2": "Share",
       "fc:frame:button:2:action": "link",
-      "fc:frame:button:2:target": getShareLink(null),
+      "fc:frame:button:2:target": getShareLink(null),*/
       /*"hey:portal": "vLatest",
       "hey:portal:image": imageUrl,
       "hey:portal:post_url": postUrl,
@@ -41,7 +50,7 @@ export async function generateMetadata() {
       "hey:portal:button:1:target": HOST,
       "hey:portal:button:2": "POST",
       "hey:portal:button:2:type": "submit",*/
-    },
+    //},
 
   };
 }
