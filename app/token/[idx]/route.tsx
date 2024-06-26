@@ -66,22 +66,18 @@ export async function GET(
   // Decode the Base64 string into an SVG string
   const svg = Buffer.from(base64, 'base64')
 
+  const resized = await sharp(svg).resize(228, 228).png().toBuffer()
   const framedPng = await sharp({
-    create: { width: 360, height: 360, channels: 3, background: "#f8f8f2" },
+    create: { width: 232, height: 232, channels: 3, background: "#f8f8f2" },
   }).composite([
-    { input: svg }
+    { input: resized }
   ])
   .png()
   .toBuffer()
 
-  const resized = await sharp(framedPng)
-    .resize(232, 232)
-    .png()
-    .toBuffer()
-
   const pngBuffer = await sharp(back)
     .composite([
-      { input: resized, gravity: 'south'}
+      { input: framedPng, gravity: 'south'}
     ])
     .png().toBuffer()
 
