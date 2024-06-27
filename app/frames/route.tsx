@@ -78,7 +78,7 @@ const handleRequest = frames(async (ctx: any) => {
 
   if (data === null) {
     return {
-      image: '/intro',
+      image: '/intro.png',
       imageOptions: {
         aspectRatio: "1.91:1",
       },
