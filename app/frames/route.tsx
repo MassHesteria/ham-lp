@@ -56,7 +56,6 @@ const getDataFromName = async (name: string): Promise<UserData|null> => {
 }
 
 const handleRequest = frames(async (ctx: any) => {
-  const baseRoute = getHostName() + "/frames";
   const message = ctx?.message
   let data: UserData|null = null
 
@@ -79,27 +78,13 @@ const handleRequest = frames(async (ctx: any) => {
 
   if (data === null) {
     return {
-      image: (
-        <div
-          tw="flex flex-col w-full h-full justify-center items-center"
-          style={{ backgroundColor: "#282a36" }}
-        >
-          <div tw="flex">
-            <span tw="text-7xl" style={{ color: "#f8f8f2" }}>
-              View Ham LPs by Owner
-            </span>
-          </div>
-          <div tw="flex">
-            <span style={{ color: "#ffb86c" }}>by @masshesteria</span>
-          </div>
-        </div>
-      ),
+      image: '/intro',
       imageOptions: {
         aspectRatio: "1.91:1",
       },
       textInput: " Search by username",
       buttons: [
-        <Button action="post" target={baseRoute}>Mine/🔎</Button>,
+        <Button action="post">Mine/🔎</Button>,
         <Button action="link" target = {getShareLink(null)}>Share</Button>
       ],
     };
@@ -145,7 +130,7 @@ const handleRequest = frames(async (ctx: any) => {
       },
       textInput: " Search by username",
       buttons: [
-        <Button action="post" target={baseRoute}>Mine/🔎</Button>,
+        <Button action="post">Mine/🔎</Button>,
         <Button action="link" target = {getShareLink(null)}>Share</Button>
       ]
     }
