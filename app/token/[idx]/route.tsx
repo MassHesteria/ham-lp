@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ImageResponse } from 'next/og';
-import { Web3 } from 'web3';
+import { createPublicClient, getContract, http } from 'viem';
 import { Ham_LP_ABI } from './ham-lp-abi';
 import { deserializeFromBase64 } from '../../generate';
 import sharp from 'sharp';
@@ -43,17 +43,26 @@ export async function GET(
    req: NextRequest,
    { params }: { params: { idx: string }}
 ) {
-  const id = params.idx
+  const id = params.idx;
 
   if (id === null) {
     return NextResponse.json({ error: 'Missing argument' }, { status: 500 })
   }
+  const client = createPublicClient({
+    transport: http('https://rpc.ham.fun'),
+  });
 
-  const web3 = new Web3('https://rpc.ham.fun');
+  //const web3 = new Web3('https://rpc.ham.fun');
   const contractAddress = '0x68f343bC08D1C093754a74F2b45a69A2f1A42872';
-  const contract = new web3.eth.Contract(Ham_LP_ABI, contractAddress);
-
-  const data = await contract.methods.tokenURI(id).call() as string
+  
+  const contract = getContract({
+    address: contractAddress, 
+    abi: Ham_LP_ABI,
+    client: client,
+  })
+  //const contract = new web3.eth.Contract(Ham_LP_ABI, contractAddress);
+  //const data = await contract.methods.tokenURI(id).call() as string
+  const data = await contract.read.tokenURI([id]) as string
   const [, encoded] = data.split(',');
   const decoded = deserializeFromBase64(encoded)
 
@@ -66,22 +75,18 @@ export async function GET(
   // Decode the Base64 string into an SVG string
   const svg = Buffer.from(base64, 'base64')
 
+  const resized = await sharp(svg).resize(226, 226).png().toBuffer()
   const framedPng = await sharp({
-    create: { width: 360, height: 360, channels: 3, background: "#f8f8f2" },
+    create: { width: 232, height: 232, channels: 3, background: "#f8f8f2" },
   }).composite([
-    { input: svg }
+    { input: resized }
   ])
   .png()
   .toBuffer()
 
-  const resized = await sharp(framedPng)
-    .resize(232, 232)
-    .png()
-    .toBuffer()
-
   const pngBuffer = await sharp(back)
     .composite([
-      { input: resized, gravity: 'south'}
+      { input: framedPng, gravity: 'south'}
     ])
     .png().toBuffer()
 
