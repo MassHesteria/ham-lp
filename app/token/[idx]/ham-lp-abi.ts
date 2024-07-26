@@ -1,4 +1,6 @@
-export const Ham_LP_ABI = [
+import { Abi } from "viem";
+
+export const Ham_LP_ABI: Abi = [
     {
         "inputs": [
             {

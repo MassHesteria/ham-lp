@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ImageResponse } from 'next/og';
-import { Web3 } from 'web3';
+import { createPublicClient, getContract, http } from 'viem';
 import { Ham_LP_ABI } from './ham-lp-abi';
 import { deserializeFromBase64 } from '../../generate';
 import sharp from 'sharp';
@@ -43,17 +43,26 @@ export async function GET(
    req: NextRequest,
    { params }: { params: { idx: string }}
 ) {
-  const id = params.idx
+  const id = params.idx;
 
   if (id === null) {
     return NextResponse.json({ error: 'Missing argument' }, { status: 500 })
   }
+  const client = createPublicClient({
+    transport: http('https://rpc.ham.fun'),
+  });
 
-  const web3 = new Web3('https://rpc.ham.fun');
+  //const web3 = new Web3('https://rpc.ham.fun');
   const contractAddress = '0x68f343bC08D1C093754a74F2b45a69A2f1A42872';
-  const contract = new web3.eth.Contract(Ham_LP_ABI, contractAddress);
-
-  const data = await contract.methods.tokenURI(id).call() as string
+  
+  const contract = getContract({
+    address: contractAddress, 
+    abi: Ham_LP_ABI,
+    client: client,
+  })
+  //const contract = new web3.eth.Contract(Ham_LP_ABI, contractAddress);
+  //const data = await contract.methods.tokenURI(id).call() as string
+  const data = await contract.read.tokenURI([id]) as string
   const [, encoded] = data.split(',');
   const decoded = deserializeFromBase64(encoded)
 
