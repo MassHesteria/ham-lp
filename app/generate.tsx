@@ -32,11 +32,8 @@ export const getPage = (
   idx: string | undefined
 ): FramesHandlerFunctionReturnType<JsonValue|undefined> => {
   let imagePath = getHostName() + `/page?u=${encodeURIComponent(username)}&v=3`;
-  const baseRoute = getHostName() + '/frames'
   const buttons: AllowedFrameButtonItems[] = [
-    <Button action="post" target={baseRoute}>
-      Mine/🔎
-    </Button>,
+    <Button action="post">Mine/🔎</Button>,
   ];
 
   let num = 0;
@@ -52,7 +49,7 @@ export const getPage = (
   if (tokens.length > 2) {
     const next = num + 1 < tokens.length ? (num + 2) % tokens.length : 0;
     buttons.push(
-      <Button action="post" target={baseRoute + `?fid=${fid}&idx=${next}`}>
+      <Button action="post" target={`/?fid=${fid}&idx=${next}`}>
         Next ⏭
       </Button>
     );
